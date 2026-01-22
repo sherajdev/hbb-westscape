@@ -10,7 +10,7 @@ This roadmap delivers a community directory for home-based businesses in the Wes
 - Integer phases (1, 2, 3, 4, 5): Planned milestone work
 - Decimal phases (e.g., 2.1): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Foundation** - Project setup, database schema, and Clerk authentication
+- [~] **Phase 1: Foundation** - Project setup, database schema, and Clerk authentication (code complete, verification pending)
 - [ ] **Phase 2: Public Directory** - Business listings, profiles, and contact modal
 - [ ] **Phase 3: Business Registration** - Owner signup and registration form with media upload
 - [ ] **Phase 4: Business Management** - Owner dashboard for editing listings
@@ -30,8 +30,8 @@ This roadmap delivers a community directory for home-based businesses in the Wes
 **Plans**: 2 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Project scaffolding with Convex + Clerk template, environment setup, auth verification
-- [ ] 01-02-PLAN.md — Database schema for users/businesses, user creation on auth, one-per-user constraint
+- [x] 01-01-PLAN.md — Project scaffolding with Convex + Clerk template, environment setup, auth verification
+- [x] 01-02-PLAN.md — Database schema for users/businesses, user creation on auth, one-per-user constraint
 
 ### Phase 2: Public Directory
 **Goal**: Visitors can browse businesses and view profiles without logging in
@@ -104,7 +104,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Planned | - |
+| 1. Foundation | 2/2 | Code complete (verification pending) | - |
 | 2. Public Directory | 0/3 | Not started | - |
 | 3. Business Registration | 0/2 | Not started | - |
 | 4. Business Management | 0/2 | Not started | - |
@@ -112,4 +112,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-22*
+*Last updated: 2026-01-23*
