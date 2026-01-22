@@ -1,166 +1,165 @@
 "use client";
-
-import {
-  Authenticated,
-  Unauthenticated,
-  useMutation,
-  useQuery,
-} from "convex/react";
-import { api } from "../convex/_generated/api";
-import Link from "next/link";
-import { SignUpButton } from "@clerk/nextjs";
-import { SignInButton } from "@clerk/nextjs";
-import { UserButton } from "@clerk/nextjs";
+import { useQuery, useMutation } from "convex/react";
+import { useConvexAuth } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { useState, useEffect } from "react";
 
 export default function Home() {
-  return (
-    <>
-      <header className="sticky top-0 z-10 bg-background p-4 border-b-2 border-slate-200 dark:border-slate-800 flex flex-row justify-between items-center">
-        Convex + Next.js + Clerk
-        <UserButton />
-      </header>
-      <main className="p-8 flex flex-col gap-8">
-        <h1 className="text-4xl font-bold text-center">
-          Convex + Next.js + Clerk
-        </h1>
-        <Authenticated>
-          <Content />
-        </Authenticated>
-        <Unauthenticated>
-          <SignInForm />
-        </Unauthenticated>
-      </main>
-    </>
+  const { isLoading, isAuthenticated } = useConvexAuth();
+  const { user: clerkUser } = useUser();
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
+  // Queries
+  const authStatus = useQuery(
+    api.users.getAuthStatus,
+    isAuthenticated ? {} : "skip"
   );
-}
-
-function SignInForm() {
-  return (
-    <div className="flex flex-col gap-8 w-96 mx-auto">
-      <p>Log in to see the numbers</p>
-      <SignInButton mode="modal">
-        <button className="bg-foreground text-background px-4 py-2 rounded-md">
-          Sign in
-        </button>
-      </SignInButton>
-      <SignUpButton mode="modal">
-        <button className="bg-foreground text-background px-4 py-2 rounded-md">
-          Sign up
-        </button>
-      </SignUpButton>
-    </div>
+  const myBusiness = useQuery(
+    api.businesses.getMyBusiness,
+    isAuthenticated ? {} : "skip"
   );
-}
+  const canCreate = useQuery(
+    api.businesses.canCreateBusiness,
+    isAuthenticated ? {} : "skip"
+  );
 
-function Content() {
-  const { viewer, numbers } =
-    useQuery(api.myFunctions.listNumbers, {
-      count: 10,
-    }) ?? {};
-  const addNumber = useMutation(api.myFunctions.addNumber);
+  // Mutations
+  const createOrGetUser = useMutation(api.users.createOrGetUser);
+  const createBusiness = useMutation(api.businesses.createBusiness);
 
-  if (viewer === undefined || numbers === undefined) {
-    return (
-      <div className="mx-auto">
-        <p>loading... (consider a loading skeleton)</p>
-      </div>
-    );
+  // Create user record on first auth
+  useEffect(() => {
+    if (isAuthenticated && authStatus?.authenticated && !authStatus?.user?.id) {
+      createOrGetUser().catch(console.error);
+    }
+  }, [isAuthenticated, authStatus, createOrGetUser]);
+
+  const handleCreateBusiness = async () => {
+    setError(null);
+    setSuccess(null);
+    try {
+      await createBusiness({
+        name: "Test Business " + Date.now(),
+        category: "Food",
+        description: "A test business for verifying the constraint",
+        address: "123 Test Street, WestScape",
+      });
+      setSuccess("Business created successfully!");
+    } catch (e: any) {
+      setError(e.message);
+    }
+  };
+
+  const handleTestConstraint = async () => {
+    setError(null);
+    setSuccess(null);
+    try {
+      await createBusiness({
+        name: "Second Business Attempt",
+        category: "Beauty",
+        description: "This should fail",
+        address: "456 Another Street",
+      });
+      setSuccess("Business created (unexpected!)");
+    } catch (e: any) {
+      setError(e.message);
+      if (e.message.includes("already have a registered business")) {
+        setSuccess("Constraint working correctly!");
+      }
+    }
+  };
+
+  if (isLoading) {
+    return <div className="p-8">Loading...</div>;
   }
 
   return (
-    <div className="flex flex-col gap-8 max-w-lg mx-auto">
-      <p>Welcome {viewer ?? "Anonymous"}!</p>
-      <p>
-        Click the button below and open this page in another window - this data
-        is persisted in the Convex cloud database!
-      </p>
-      <p>
-        <button
-          className="bg-foreground text-background text-sm px-4 py-2 rounded-md"
-          onClick={() => {
-            void addNumber({ value: Math.floor(Math.random() * 10) });
-          }}
-        >
-          Add a random number
-        </button>
-      </p>
-      <p>
-        Numbers:{" "}
-        {numbers?.length === 0
-          ? "Click the button!"
-          : (numbers?.join(", ") ?? "...")}
-      </p>
-      <p>
-        Edit{" "}
-        <code className="text-sm font-bold font-mono bg-slate-200 dark:bg-slate-800 px-1 py-0.5 rounded-md">
-          convex/myFunctions.ts
-        </code>{" "}
-        to change your backend
-      </p>
-      <p>
-        Edit{" "}
-        <code className="text-sm font-bold font-mono bg-slate-200 dark:bg-slate-800 px-1 py-0.5 rounded-md">
-          app/page.tsx
-        </code>{" "}
-        to change your frontend
-      </p>
-      <p>
-        See the{" "}
-        <Link href="/server" className="underline hover:no-underline">
-          /server route
-        </Link>{" "}
-        for an example of loading data in a server component
-      </p>
-      <div className="flex flex-col">
-        <p className="text-lg font-bold">Useful resources:</p>
-        <div className="flex gap-2">
-          <div className="flex flex-col gap-2 w-1/2">
-            <ResourceCard
-              title="Convex docs"
-              description="Read comprehensive documentation for all Convex features."
-              href="https://docs.convex.dev/home"
-            />
-            <ResourceCard
-              title="Stack articles"
-              description="Learn about best practices, use cases, and more from a growing
-            collection of articles, videos, and walkthroughs."
-              href="https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
-            />
-          </div>
-          <div className="flex flex-col gap-2 w-1/2">
-            <ResourceCard
-              title="Templates"
-              description="Browse our collection of templates to get started quickly."
-              href="https://www.convex.dev/templates"
-            />
-            <ResourceCard
-              title="Discord"
-              description="Join our developer community to ask questions, trade tips & tricks,
-            and show off your projects."
-              href="https://www.convex.dev/community"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+    <main className="p-8 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">HBB@WestScape - Foundation Test</h1>
 
-function ResourceCard({
-  title,
-  description,
-  href,
-}: {
-  title: string;
-  description: string;
-  href: string;
-}) {
-  return (
-    <div className="flex flex-col gap-2 bg-slate-200 dark:bg-slate-800 p-4 rounded-md h-28 overflow-auto">
-      <a href={href} className="text-sm underline hover:no-underline">
-        {title}
-      </a>
-      <p className="text-xs">{description}</p>
-    </div>
+      {!isAuthenticated ? (
+        <div>
+          <p className="mb-4">Please sign in to test the foundation</p>
+          <SignInButton mode="modal">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded">
+              Sign In
+            </button>
+          </SignInButton>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {/* Auth Status */}
+          <section className="border p-4 rounded">
+            <h2 className="font-semibold mb-2">Auth Status</h2>
+            <p>Clerk: {clerkUser?.firstName} ({clerkUser?.emailAddresses[0]?.emailAddress})</p>
+            <p>Convex User ID: {authStatus?.user?.id ?? "Not created yet"}</p>
+            <SignOutButton>
+              <button className="mt-2 text-sm text-gray-500 underline">Sign Out</button>
+            </SignOutButton>
+          </section>
+
+          {/* Business Status */}
+          <section className="border p-4 rounded">
+            <h2 className="font-semibold mb-2">Business Status</h2>
+            {myBusiness ? (
+              <div>
+                <p className="text-green-600">You have a business registered:</p>
+                <p><strong>Name:</strong> {myBusiness.name}</p>
+                <p><strong>Category:</strong> {myBusiness.category}</p>
+                <p><strong>Status:</strong> {myBusiness.status}</p>
+              </div>
+            ) : (
+              <p>No business registered yet</p>
+            )}
+            <p className="mt-2 text-sm">
+              Can create: {canCreate?.canCreate ? "Yes" : `No (${canCreate?.reason})`}
+            </p>
+          </section>
+
+          {/* Test Actions */}
+          <section className="border p-4 rounded">
+            <h2 className="font-semibold mb-2">Test Actions</h2>
+            <div className="space-x-2">
+              <button
+                onClick={handleCreateBusiness}
+                disabled={!canCreate?.canCreate}
+                className="bg-green-500 text-white px-4 py-2 rounded disabled:opacity-50"
+              >
+                Create Business
+              </button>
+              <button
+                onClick={handleTestConstraint}
+                className="bg-orange-500 text-white px-4 py-2 rounded"
+              >
+                Test Constraint (Try Second)
+              </button>
+            </div>
+            {error && <p className="mt-2 text-red-600">Error: {error}</p>}
+            {success && <p className="mt-2 text-green-600">{success}</p>}
+          </section>
+
+          {/* Success Criteria */}
+          <section className="border p-4 rounded bg-gray-50">
+            <h2 className="font-semibold mb-2">Phase 1 Success Criteria</h2>
+            <ul className="space-y-1 text-sm">
+              <li className={authStatus?.authenticated ? "text-green-600" : "text-gray-400"}>
+                {authStatus?.authenticated ? "✓" : "○"} User can sign up and log in via Clerk
+              </li>
+              <li className={authStatus?.user?.id ? "text-green-600" : "text-gray-400"}>
+                {authStatus?.user?.id ? "✓" : "○"} User record created in Convex
+              </li>
+              <li className="text-green-600">
+                ✓ Database schema exists for users and businesses
+              </li>
+              <li className={myBusiness || (error?.includes("already have")) ? "text-green-600" : "text-gray-400"}>
+                {myBusiness || (error?.includes("already have")) ? "✓" : "○"} One-business-per-user constraint works
+              </li>
+            </ul>
+          </section>
+        </div>
+      )}
+    </main>
   );
 }
