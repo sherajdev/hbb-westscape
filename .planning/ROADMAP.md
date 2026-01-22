@@ -2,7 +2,7 @@
 
 ## Overview
 
-This roadmap delivers a community directory for home-based businesses in WestScape estate. Starting with foundation and authentication, we build the public-facing directory and profiles, then add business registration and management capabilities, and finally complete the admin approval workflow. Each phase delivers a coherent, verifiable capability.
+This roadmap delivers a community directory for home-based businesses in the WestScape estate. Starting with foundation and authentication, we build the public-facing directory and profiles, then add business registration and management capabilities, and finally complete the admin approval workflow. Each phase delivers a coherent, verifiable capability.
 
 ## Phases
 
@@ -27,11 +27,11 @@ This roadmap delivers a community directory for home-based businesses in WestSca
   2. User can sign up and log in via Clerk
   3. Database schema exists for businesses, users, and their relationships
   4. System enforces one business per user constraint
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 01-01: TBD
-- [ ] 01-02: TBD
+- [ ] 01-01-PLAN.md — Project scaffolding with Convex + Clerk template, environment setup, auth verification
+- [ ] 01-02-PLAN.md — Database schema for users/businesses, user creation on auth, one-per-user constraint
 
 ### Phase 2: Public Directory
 **Goal**: Visitors can browse businesses and view profiles without logging in
@@ -104,7 +104,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/2 | Not started | - |
+| 1. Foundation | 0/2 | Planned | - |
 | 2. Public Directory | 0/3 | Not started | - |
 | 3. Business Registration | 0/2 | Not started | - |
 | 4. Business Management | 0/2 | Not started | - |
