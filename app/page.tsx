@@ -142,7 +142,7 @@ export default function Home() {
 
           {/* Success Criteria */}
           <section className="border p-4 rounded bg-gray-50">
-            <h2 className="font-semibold mb-2">Phase 1 Success Criteria</h2>
+            <h2 className="font-semibold mb-2 text-gray-900">Phase 1 Success Criteria</h2>
             <ul className="space-y-1 text-sm">
               <li className={authStatus?.authenticated ? "text-green-600" : "text-gray-400"}>
                 {authStatus?.authenticated ? "✓" : "○"} User can sign up and log in via Clerk
