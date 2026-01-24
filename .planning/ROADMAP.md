@@ -43,12 +43,13 @@ Plans:
   3. Business cards display name, category, short description, and "New" badge if applicable
   4. Visitor can click into a business profile and see full details, photos, and video
   5. Visitor can click Contact button and see modal with all business contact links
-**Plans**: TBD
+**Plans**: 4 plans
 
 Plans:
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
-- [ ] 02-03: TBD
+- [ ] 02-01-PLAN.md — Public Convex queries, Next.js image config, lucide-react icons
+- [ ] 02-02-PLAN.md — Directory page with business cards and category filtering
+- [ ] 02-03-PLAN.md — Business profile page with contact modal
+- [ ] 02-04-PLAN.md — Test data seeding and end-to-end verification
 
 ### Phase 3: Business Registration
 **Goal**: Business owners can register their business and submit for approval
@@ -105,11 +106,11 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 2/2 | ✓ Complete | 2026-01-24 |
-| 2. Public Directory | 0/3 | Not started | - |
+| 2. Public Directory | 0/4 | Not started | - |
 | 3. Business Registration | 0/2 | Not started | - |
 | 4. Business Management | 0/2 | Not started | - |
 | 5. Admin | 0/2 | Not started | - |
 
 ---
 *Roadmap created: 2026-01-22*
-*Last updated: 2026-01-23*
+*Last updated: 2026-01-24*
